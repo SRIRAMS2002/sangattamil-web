@@ -1,34 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# சங்கத் தமிழ் — Sangam Corpus and Concordance
 
-## Getting Started
+Next.js rebuild of sangattamil.com (Dr. A. Kamatchi). No database: the corpus lives in `data/*.json`,
+generated from the original Excel files and read on the server.
 
-First, run the development server:
+## Pages
+
+| Route | What it does | Data |
+|---|---|---|
+| `/` | Kural of the day, quick word search, links to each tool | all |
+| `/thirukkural` | Search by chapter, kural number, first word, last word, any word | `data/kural.json` |
+| `/concordance` | சங்க இலக்கியச் சொற்களும் அவற்றின் வருகையும்: every line a word occurs in (19 texts) | `data/concordance.json` |
+| `/morphology` | உருபனியல் பகுப்புத் தொகுப்பு: search parsed lines by word, grammar marker or text | `data/morph.json` |
+| `/dictionary` | சங்க அகராதி: Tamil ↔ English word meanings | `data/morph.json` |
+| `/about` | Coverage and contact | — |
+
+All searches are plain GET URLs (`/concordance?lit=நற்றிணை&w=கொன்றை`), so results are shareable and work without JavaScript.
+
+## Run
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
+npm run build && npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Updating the corpus
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Edit the Excel files in `../TAMIL LANGUAGE/`, then regenerate the JSON:
 
-## Learn More
+```bash
+pip install openpyxl
+python scripts/convert_xlsx.py "../TAMIL LANGUAGE/WEBSITE NEW_16092022.xlsx" "../TAMIL LANGUAGE/SANGAM DICTIONARY.xlsx"
+```
 
-To learn more about Next.js, take a look at the following resources:
+The script asserts kurals 1–1330 are all present and that the 133 chapter names are in canonical order.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deploy
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Any Node host works (Vercel is zero-config). Pages render on the server, so this is not a static export.
